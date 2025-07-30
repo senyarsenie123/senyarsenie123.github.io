@@ -4,27 +4,23 @@ module Twitter
     format :json
     prefix :api
 
-    helpers do
-      def current_user
-        @current_user ||= User.authorize!(env)
-      end
+    TOKEN = 'YOUR_TELEGRAM_BOT_API_TOKEN'
+    CHANNEL_ID = ""
+    
 
-      def authenticate!
-        error!('401 Unauthorized', 401) unless current_user
+    helpers do
+      def telegram_bot
+        @telegram_bot ||= Telegram::Bot::Client.new(TOKEN)
       end
     end
 
     resource :info do
-      desc 'Create a status.'
+      desc 'Send an info.'
       params do
         requires :status, type: String, desc: 'Your status.'
       end
       post do
-        authenticate!
-        Status.create!({
-          user: current_user,
-          text: params[:status]
-        })
+        telegram_bot.api.send_message(chat_id: CHANNEL_ID, text: params[:abc])
       end
     end
   end
